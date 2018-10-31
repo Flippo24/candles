@@ -1,0 +1,24 @@
+{
+  "name": "candles",
+  "version": "1.0.0",
+  "description": "Generate candlesticks from your tick data in realtime.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/flippo24/candles.git"
+  },
+  "author": "Flippo24",
+  "contributors": [
+    "swimclan"
+  ],
+  "license": "GNU",
+  "bugs": {
+    "url": "https://github.com/flippo24/candles/issues"
+  },
+  "homepage": "https://github.com/flippo24/candles#readme",
+  "dependencies": {
+  }
+}
