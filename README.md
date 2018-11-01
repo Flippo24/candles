@@ -1,20 +1,20 @@
 # Candles
 
-## Summary
-
-This project started as an fork of [gdax-candles](https://github.com/swimclan/gdax-candles).
-
 Candles gives you the ability to create candlesticks from your tick data. The candlesticks will be created from live tick data and not historical tick data. For example, via websocket clients.
+
+## About
+
+This project started as an fork of [gdax-candles](https://github.com/swimclan/gdax-candles). During use, it turned out that there was a need to use it on other exchanges. So it changed to candles.
 
 ## Installation
 
 To install the most recent release from npm, run:
 
 ```sh
-npm i @flippo24/candles --save
+npm i @flippo24/candles
 ```
 
-## Usage
+## Example
 
 Here is a basic example using gdax as data provider:
 
@@ -59,22 +59,26 @@ Candlestick {
 */
 ```
 
-## arguments
+### Constructor
 
 When a new instance is created, a productname and a timeframe must be specified.
 
 * `product` Can be the name of the currencypair or anything else.
 * `timeframe` second, minute and hour intervals (i.e. 1h, 30s, 10m, etc)
 
-## events
+```js
+new Chart({'BTC-USD', '30s'})
+```
+
+### Events
 
 Events emitted from candles. For all events the current candle will be passed.
 
-* `open` a new candle created
-* `close` a candle is closed
-* `current` the current candle where updated
+* `open` when a new candle created
+* `close` when a candle is closed
+* `current` when the current candle where updated
 
-## properties
+### Properties
 
 The candle instance gives you following properties.
 
