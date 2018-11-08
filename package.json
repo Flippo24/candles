@@ -1,6 +1,6 @@
 {
   "name": "candles",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Generate candlesticks from your tick data in realtime.",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,5 @@
     "url": "https://github.com/flippo24/candles/issues"
   },
   "homepage": "https://github.com/flippo24/candles#readme",
-  "dependencies": {
-  }
+  "dependencies": {}
 }

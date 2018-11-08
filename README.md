@@ -1,17 +1,18 @@
 # Candles
 
-Candles gives you the ability to create candlesticks from your tick data. The candlesticks will be created from live tick data and not historical tick data. For example, via websocket clients.
+Candles gives you the ability to create candlesticks from your tick data. The candlesticks will be created from live tick data and not historical tick data. For example, via websocket clients. 
 
-## About
+### About
 
-This project started as an fork of [gdax-candles](https://github.com/swimclan/gdax-candles). During use, it turned out that there was a need to use it on other exchanges. So it changed to candles.
+This project started as an fork of [gdax-candles](https://github.com/swimclan/gdax-candles). 
+During use, it turned out that there was a need to use it on other exchanges. So it changed to candles.
 
 ## Installation
 
 To install the most recent release from npm, run:
 
 ```sh
-npm i @flippo24/candles
+npm i candles --save
 ```
 
 ## Example
@@ -19,56 +20,127 @@ npm i @flippo24/candles
 Here is a basic example using gdax as data provider:
 
 ```js
-const Chart = require('candles');
+const candles = require('candles');
 const Gdax = require('gdax');
 
-const product = 'ETH-USD';
-const timeframe = '2m';
+const product = ['ETH-USD', 'BTC-USD'];
+const timeframe = ['30s', '1m', '2m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '24h'];
+
+const options = {
+  timediff: {
+    enabled: true,
+    fixed: false,
+    value: 50,
+    samples: 1000
+  }
+}
+const Candlecollection = new candles(options);
+Candlecollection.addProduct(product, timeframe);
+
 const websocket = new Gdax.WebsocketClient(product);
 
-const ETHChart = new Chart({product, timeframe}).start();
-
 websocket.on('message', data => {
+if (data.time) {
+  Candlecollection.adjustClock(data.time);
+}
+
 if (data.type === 'match') {
-    ETHChart.SetPrice(data.price, data.size)
+    Candlecollection.SetSeriesPrice(data.product_id, data.price, data.size);
     }
 });
 
-ETHChart.on('close', candle => {
+Candlecollection.on('close', candle => {
   console.log(candle);
 });
 
 /*
 Candlestick {
-  timestamp: 2018-10-30T23:02:00.002Z,
-  product: 'ETH-USD',
-  open: '195.53000000',
-  price: '195.56000000',
-  close: '195.56000000',
-  high: '195.56000000',
-  low: '195.35000000',
-  volume: '21.10665262',
-  size: '0.21000000',
+  timestamp: 2018-11-08T15:20:00.000Z,
+  timeframe: '30s',
+  product: 'BTC-USD',
+  price: '6479.01000000',
+  open: '6479.01000000',
+  high: '6479.01000000',
+  low: '6479.00000000',
+  close: '6479.01000000',
+  volume: '0.39818029',
+  size: '0.01000000',
   wick:
    { top: '0.00000000',
-     bottom: '0.18000000',
-     size: '0.18000000',
-     ratio: '0.85714286' },
+     bottom: '0.01000000',
+     size: '0.01000000',
+     ratio: '1.00000000' },
   closed: true,
   market: 'bullish' }
-*/
 ```
-
 ### Constructor
 
-When a new instance is created, a productname and a timeframe must be specified.
-
-* `product` Can be the name of the currencypair or anything else.
-* `timeframe` second, minute and hour intervals (i.e. 1h, 30s, 10m, etc)
+When a new instance is created, some options for fixing timelag between provider and your local system can be specified.
+By default lagtime correction is disabled.
 
 ```js
-new Chart({'BTC-USD', '30s'})
+const options = {
+  timediff: {
+    enabled: true,
+    fixed: false,
+    value: 50,
+    samples: 1000
+  }
+}
+
+const Candlecollection = new candles(options);
 ```
+
+* `enabled` Enabling the correction of timelag.
+* `fixed` for a fixed lag between your provider and you local system set fixed to true. Otherwise the lagtime will be calculated be the given message timestamp, you have to pass.
+* `value` only when fixed lag selected, the lag in ms has to be specified.
+* `samples` For the calculated lagtime an average of x samples will be calculated.
+
+### Functions
+
+#### addProduct()
+
+After creating an instance of candles, you have to add products and timeframes.
+
+```js
+const product = ['ETH-USD', 'BTC-USD'];
+const timeframe = ['30s', '1m', '2m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '24h'];
+Candlecollection.addProduct(product, timeframe);
+```
+
+* `product` You can set a name for your own, but it make sense to put the name of the currencypair in here. You have to tell candle this name, every time you update the current candle.  
+* `timeframe` Setup the timeframe of your choice. The timeframes have to be writen in any number of s=seconds, m=minutes, h=hours and d=days. Feel free to use 13m or 7s as well as 21h. 
+Product and Timeframe can both be arrays. Then for every product the given timeframe will be created. You can also seperate it.
+
+```js
+Candlecollection.addProduct('ETH-USD', '30s');
+Candlecollection.addProduct('BTC-USD', '1m');
+```
+
+#### SetSeriesPrice()
+
+Candles need to know when the price of the product has been changed.
+
+```js
+const product = 'BTC-USD';
+const price = 6479.01;
+const size = 0.39818029;
+Candlecollection.SetSeriesPrice(product, price, size)
+```
+
+* `product` The name you set in addProduct() before. 
+* `price` The actual price you got from provider.
+* `size` This is an optional parameter. If your provider don't give you any volume information, just leave it. Then your candlesticks volume will be 0.
+
+#### adjustClock()
+
+If you setup timelag correction, by enabling and setting samples count, you can pass your message timestamps to candles. Candles will build an average of these and your system clock, so the timestamp of the created candle will more accorate. 
+
+```js
+Candlecollection.adjustClock(timestamp);
+```
+
+* `timestamp` Will be the timestamp from your providers message.
 
 ### Events
 
@@ -78,10 +150,48 @@ Events emitted from candles. For all events the current candle will be passed.
 * `close` when a candle is closed
 * `current` when the current candle where updated
 
+These events can be more specific by adding the timeframe and/or the productname.
+
+* `open BTC-USD` when a new candle of product 'BTC-USD' created
+* `open BTC-USD 1m` when a new candle of product 'BTC-USD' with timeframe '1m' created
+* `open 1m` when a new candle with timeframe '1m' created
+
+This works for close and current events to. 
+
+like:
+
+```js
+Candlecollection.on('close BTC-USD 30s', candle => {
+  console.log(candle);
+});
+```
+
 ### Properties
 
-The candle instance gives you following properties.
+The candles instance provides you following properties.
 
-* `currentCandle` Can be the name of the currencypair or anything else.
-* `candles` second, minute and hour intervals (i.e. 1h, 30s, 10m, etc)
-* `timeframe` the timeframe you choose
+Candles collects all candlesticks for you in a series. You can get it by using the product and timeframe as propertienames.
+
+```js
+Candlecollection.series['BTC-USD'].timeframe['30s'].candles
+```
+
+### Candlestick
+
+This is an overview of the candlestick properties.
+
+* `timestamp` Time when this candle started. Opening time.
+* `timeframe` How much time this candle burned.
+* `price` The actual price.
+* `open` Opening price.
+* `high` Highest price in timeframe.
+* `low` Lowest price in timeframe.
+* `close` Closing price.
+* `volume` Volume traded in this timeframe.
+* `size` The Candlesize.
+* `wick.top` Top of the wick.
+* `wick.bottom` Bottom of the wick.
+* `wick.size` Size of the wick.
+* `wick.ratio` Ration body to wick.
+* `closed` Is this candle closed?
+* `market` Market situation of this candle.

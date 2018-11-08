@@ -2,7 +2,7 @@ const Clock = require('./Clock');
 const EventEmitter = require('events');
 const Series = require('./Series.js');
 
-class Chart extends EventEmitter {
+class candles extends EventEmitter {
   constructor(options) {
     super();
     this.series = {};
@@ -61,7 +61,7 @@ class Chart extends EventEmitter {
     this.series[product].timeframe[timeframe] = series;
   }
 
-  SetSeriesPrice(product, price, size) {
+  SetSeriesPrice(product, price, size=0) {
     Object.keys(this.series[product].timeframe).forEach(timeframe => {
       this.series[product].timeframe[timeframe].price = Number.parseFloat(price);
       this.series[product].timeframe[timeframe].currentCandle.updatePrice(Number.parseFloat(price), Number.parseFloat(size).toFixed(8));
@@ -91,4 +91,4 @@ class Chart extends EventEmitter {
   }
 }
 
-module.exports = Chart;
+module.exports = candles;

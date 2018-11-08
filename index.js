@@ -1,3 +1,3 @@
-const Chart = require('./src/Chart');
+const candles = require('./src/Candles');
 
-module.exports = Chart;
+module.exports = candles;

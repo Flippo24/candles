@@ -1,14 +1,13 @@
-const {average} = require('./utils');
-
 class Candlestick {
-  constructor(open, product) {
-    this.timestamp = new Date();
+  constructor(open, product, timeframe, timestamp) {
+    this.timestamp = timestamp;
+    this.timeframe = timeframe;
     this.product = product;
-    this.open = open;
     this.price = this.open;
-    this.close = this.open;
+    this.open = open;
     this.high = this.open;
     this.low = this.open;
+    this.close = this.open;
     this.volume = 0;
     this.size = 0;
     this.wick = {};
@@ -47,7 +46,11 @@ class Candlestick {
       this.wick.bottom = (Number.parseFloat(this.close) - Number.parseFloat(this.low)).toFixed(8);
     }
     this.wick.size = Math.abs(Number.parseFloat(this.wick.top) - Number.parseFloat(this.wick.bottom)).toFixed(8);
-    this.wick.ratio = (Number.parseFloat(this.wick.size) / Number.parseFloat(this.size)).toFixed(8)
+    if (Number.parseFloat(this.size) > 0) {
+      this.wick.ratio = (Number.parseFloat(this.wick.size) / Number.parseFloat(this.size)).toFixed(8);
+    } else {
+      this.wick.ratio = Number.parseFloat(0).toFixed(8);
+    }
     this.setMarket();
   }
 }
