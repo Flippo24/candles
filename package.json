@@ -6,15 +6,18 @@
   "scripts": {
     "test": "npm test"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/flippo24/candles.git"
-  },
+  "repository": "github:flippo24/candles",
+  "keywords": [
+    "trading",
+    "candlestick",
+    "ohlcv",
+    "technical-analysis"
+  ],
   "author": "Flippo24",
   "contributors": [
     "swimclan"
   ],
-  "license": "GNU",
+  "license": "GPL-3.0-only",
   "bugs": {
     "url": "https://github.com/flippo24/candles/issues"
   },
