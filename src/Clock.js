@@ -1,4 +1,4 @@
-const EventEmitter = require('events') 
+const EventEmitter = require('events')
 const { timeframeToSec, nextTime } = require('./utils');
 const {average} = require('./utils');
 
@@ -53,11 +53,11 @@ class Clock extends EventEmitter {
   setOptions(options) {
     this.timediff.enabled = options.enabled;
     this.timediff.fixed = options.fixed;
-    this.timediff.value = options.value;    
+    this.timediff.value = options.value;
     this.timediff.samples = options.samples;
     if (this.timediff.enabled && this.timediff.fixed) {
       this.timediff.drift = this.timediff.value;
-    } 
+    }
   }
 
   adjustClock(time) {
@@ -69,15 +69,3 @@ class Clock extends EventEmitter {
 }
 
 module.exports = Clock;
-
-let instance;
-
-module.exports.getInstance = function(resolution) {
-  if (!instance) {
-    instance = new Clock();
-  }
-  if (resolution) {
-    instance.addResolution(resolution);
-  }
-  return instance;
-}

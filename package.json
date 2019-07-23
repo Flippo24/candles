@@ -1,6 +1,6 @@
 {
   "name": "candles",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Generate candlesticks from your tick data in realtime.",
   "main": "index.js",
   "scripts": {
@@ -10,8 +10,12 @@
   "keywords": [
     "trading",
     "candlestick",
+    "realtime",
     "ohlcv",
-    "technical-analysis"
+    "ohlc",
+    "time series",
+    "trading",
+    "stock"
   ],
   "author": "Flippo24",
   "contributors": [

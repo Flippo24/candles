@@ -46,7 +46,7 @@ class Candlestick {
       this.wick.bottom = (Number.parseFloat(this.close) - Number.parseFloat(this.low)).toFixed(8);
     }
     this.wick.size = Math.abs(Number.parseFloat(this.wick.top) - Number.parseFloat(this.wick.bottom)).toFixed(8);
-    if (Number.parseFloat(this.size) > 0) {
+    if (Number.parseFloat(this.size)> 0) {
       this.wick.ratio = (Number.parseFloat(this.wick.size) / Number.parseFloat(this.size)).toFixed(8);
     } else {
       this.wick.ratio = Number.parseFloat(0).toFixed(8);
