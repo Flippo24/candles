@@ -13,6 +13,7 @@ class Series extends EventEmitter {
     this.currentCandle = new Candlestick(this.price, this.product, this.timeframe, this.nexttime);
     this.lastClose = null;
     this.price = 0;
+    this.onSeriesClockTick = this.onSeriesClockTick.bind(this)
   }
 
   openSeriesCandle() {
