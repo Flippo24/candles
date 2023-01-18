@@ -50,7 +50,7 @@ class candles extends EventEmitter {
       this.clock.start();
     }
     var series = new Series(product, timeframe, serieslength);
-    this.clock.on('tick '+ timeframe, series.onSeriesClockTick.bind(series));
+    this.clock.on('tick ' + timeframe, series.onSeriesClockTick);
     series.on('open',this.seriesOpen.bind(this));
     series.on('close',this.seriesClose.bind(this));
     if (!this.series[product]) {
@@ -68,9 +68,9 @@ class candles extends EventEmitter {
 
   removeProduct(product, timeframe) {
     if (this.series[product].timeframe[timeframe]) {
-      this.clock.off('tick '+ timeframe, this.series[product].timeframe[timeframe].onSeriesClockTick.bind(this.series[product].timeframe[timeframe]));
+      this.clock.off('tick ' + timeframe, this.series[product].timeframe[timeframe].onSeriesClockTick);
       this.series[product].timeframe[timeframe].off('open',this.seriesOpen.bind(this));
-      this.series[product].timeframe[timeframe].off('close',this.seriesOpen.bind(this));
+      this.series[product].timeframe[timeframe].off('close',this.seriesClose.bind(this));
       delete this.series[product].timeframe[timeframe];
     }
     if (this.series[product].timeframe.lenght == 0) {
