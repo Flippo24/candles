@@ -73,7 +73,7 @@ class candles extends EventEmitter {
       this.series[product].timeframe[timeframe].off('close',this.seriesClose.bind(this));
       delete this.series[product].timeframe[timeframe];
     }
-    if (this.series[product].timeframe.lenght == 0) {
+    if (Object.keys(this.series[product].timeframe).length === 0) {
       delete this.series[product];
     }
   }
