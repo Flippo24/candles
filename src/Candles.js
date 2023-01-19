@@ -85,8 +85,8 @@ class candles extends EventEmitter {
       }
       this.series[product].timeframe[timeframe].price = Number.parseFloat(price);
       this.series[product].timeframe[timeframe].currentCandle.updatePrice(Number.parseFloat(price), Number.parseFloat(size).toFixed(8));
-      this.emit('current ' + this.series[product].product + ' ' + this.series[product].timeframe[timeframe].timeframe, this.series[product].timeframe[timeframe].currentCandle);
-      this.emit('current ' + this.series[product].product, this.series[product].timeframe[timeframe].currentCandle);
+      this.emit('current ' + this.series[product].timeframe[timeframe].product + ' ' + this.series[product].timeframe[timeframe].timeframe, this.series[product].timeframe[timeframe].currentCandle);
+      this.emit('current ' + this.series[product].timeframe[timeframe].product, this.series[product].timeframe[timeframe].currentCandle);
       this.emit('current ' + this.series[product].timeframe[timeframe].timeframe, this.series[product].timeframe[timeframe].currentCandle);
       this.emit('current', this.series[product].timeframe[timeframe].currentCandle);
     });
