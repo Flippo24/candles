@@ -18,7 +18,7 @@ class candles extends EventEmitter {
     this.clock.setOptions(this.options.timediff)
   }
 
-  addProduct(product, timeframe, serieslength=0) {
+  addProduct(product, timeframe, serieslength = 0) {
     if (!product) {
       throw 'product is missing'
     }
@@ -60,7 +60,7 @@ class candles extends EventEmitter {
   }
 
   getTimeDrift() {
-      return this.clock.timediff.drift
+    return this.clock.timediff.drift
   }
 
   removeProduct(product, timeframe) {
@@ -87,7 +87,7 @@ class candles extends EventEmitter {
     delete this.series[product].timeframe[timeframe];
   }
 
-  SetSeriesPrice(product, price, size=0) {
+  SetSeriesPrice(product, price, size = 0) {
     Object.keys(this.series[product].timeframe).forEach(timeframe => {
       if (!this.series[product].timeframe[timeframe]) {
         return;
