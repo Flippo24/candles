@@ -1,6 +1,6 @@
 {
   "name": "candles",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Generate candlesticks from your tick data in realtime.",
   "main": "index.js",
   "scripts": {
