@@ -49,7 +49,7 @@ if (data.type === 'match') {
     }
 });
 
-Candlecollection.on('close', candle => {
+Candlecollection.on('close', (candle, candles) => {
   console.log(candle);
 });
 
@@ -191,7 +191,7 @@ This works also for close and current events to.
 like:
 
 ```js
-Candlecollection.on('close BTC-USD 30s', currentCandle, candles => {
+Candlecollection.on('close BTC-USD 30s', (currentCandle, candles) => {
   console.log(currentCandle);
 });
 ```

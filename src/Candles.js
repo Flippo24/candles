@@ -18,30 +18,27 @@ class candles extends EventEmitter {
     this.clock.setOptions(this.options.timediff)
   }
 
-  addProduct(product, timeframe, serieslength=0) {
+  addProduct(product, timeframe, serieslength = 0) {
     if (!product) {
       throw 'product is missing'
     }
     if (!timeframe) {
       throw 'timeframe is missing'
     }
-    if (Array.isArray(product)) {
-      product.forEach(product => {
+    (Array.isArray(product) ? product : [product]).forEach(product => {
+      if (!this.series[product]) {
         this.addTimeframe(product, timeframe, serieslength);
-      })
-    } else {
-      this.addTimeframe(product,  timeframe, serieslength);
-    }
+      }
+    })
   };
 
   addTimeframe(product, timeframe, serieslength) {
-    if (Array.isArray(timeframe)) {
-      timeframe.forEach(timeframe => {
-        this.addSeries(product, timeframe, serieslength);
-      })
-    } else {
+    (Array.isArray(timeframe) ? timeframe : [timeframe]).forEach(timeframe => {
+      if (this.series[product]?.timeframe[timeframe]) {
+        return
+      }
       this.addSeries(product, timeframe, serieslength);
-    }
+    })
   }
 
   addSeries(product, timeframe, serieslength) {
@@ -51,8 +48,8 @@ class candles extends EventEmitter {
     }
     var series = new Series(product, timeframe, serieslength);
     this.clock.on('tick ' + timeframe, series.onSeriesClockTick);
-    series.on('open',this.seriesOpen.bind(this));
-    series.on('close',this.seriesClose.bind(this));
+    series.on('open', this.seriesOpen.bind(this));
+    series.on('close', this.seriesClose.bind(this));
     if (!this.series[product]) {
       this.series[product] = {};
     }
@@ -63,32 +60,44 @@ class candles extends EventEmitter {
   }
 
   getTimeDrift() {
-      return this.clock.timediff.drift
+    return this.clock.timediff.drift
   }
 
   removeProduct(product, timeframe) {
-    if (this.series[product].timeframe[timeframe]) {
-      this.clock.off('tick ' + timeframe, this.series[product].timeframe[timeframe].onSeriesClockTick);
-      this.series[product].timeframe[timeframe].off('open',this.seriesOpen.bind(this));
-      this.series[product].timeframe[timeframe].off('close',this.seriesClose.bind(this));
-      delete this.series[product].timeframe[timeframe];
-    }
-    if (Object.keys(this.series[product].timeframe).length === 0) {
-      delete this.series[product];
-    }
+    (Array.isArray(product) ? product : [product]).forEach(product => {
+      if (this.series[product]) {
+        this.removeTimeframe(product, timeframe);
+        Object.keys(this.series[product].timeframe).length || delete this.series[product];
+      }
+    })
   }
 
-  SetSeriesPrice(product, price, size=0) {
+  removeTimeframe(product, timeframe) {
+    (Array.isArray(timeframe) ? timeframe : [timeframe]).forEach(timeframe => {
+      if (this.series[product]?.timeframe[timeframe]) {
+        this.removeSeries(product, timeframe)
+      }
+    })
+  }
+
+  removeSeries(product, timeframe) {
+    this.clock.off('tick ' + timeframe, this.series[product].timeframe[timeframe].onSeriesClockTick);
+    this.series[product].timeframe[timeframe].off('open', this.seriesOpen.bind(this));
+    this.series[product].timeframe[timeframe].off('close', this.seriesClose.bind(this));
+    delete this.series[product].timeframe[timeframe];
+  }
+
+  SetSeriesPrice(product, price, size = 0) {
     Object.keys(this.series[product].timeframe).forEach(timeframe => {
       if (!this.series[product].timeframe[timeframe]) {
         return;
       }
       this.series[product].timeframe[timeframe].price = Number.parseFloat(price);
       this.series[product].timeframe[timeframe].currentCandle.updatePrice(Number.parseFloat(price), Number.parseFloat(size).toFixed(8));
-      this.emit('current ' + this.series[product].timeframe[timeframe].product + ' ' + this.series[product].timeframe[timeframe].timeframe, this.series[product].timeframe[timeframe].currentCandle);
-      this.emit('current ' + this.series[product].timeframe[timeframe].product, this.series[product].timeframe[timeframe].currentCandle);
-      this.emit('current ' + this.series[product].timeframe[timeframe].timeframe, this.series[product].timeframe[timeframe].currentCandle);
-      this.emit('current', this.series[product].timeframe[timeframe].currentCandle);
+      this.emit('current ' + this.series[product].timeframe[timeframe].product + ' ' + this.series[product].timeframe[timeframe].timeframe, this.series[product].timeframe[timeframe].currentCandle, this.series[product].timeframe[timeframe].candles);
+      this.emit('current ' + this.series[product].timeframe[timeframe].product, this.series[product].timeframe[timeframe].currentCandle, this.series[product].timeframe[timeframe].candles);
+      this.emit('current ' + this.series[product].timeframe[timeframe].timeframe, this.series[product].timeframe[timeframe].currentCandle, this.series[product].timeframe[timeframe].candles);
+      this.emit('current', this.series[product].timeframe[timeframe].currentCandle, this.series[product].timeframe[timeframe].candles);
     });
   }
 
